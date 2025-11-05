@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+problema01,org.example.checkout,Money,0,7,0,0,0,1,0,1,0,1
+problema01,org.example.checkout,CouponService,0,67,0,16,0,11,0,11,0,2
+problema01,org.example.checkout,CheckoutResult,0,18,0,0,0,7,0,1,0,1
+problema01,org.example.checkout,CustomerTier,0,34,0,0,0,2,0,1,0,1
+problema01,org.example.checkout,CheckoutService,0,172,0,20,0,31,0,12,0,2
+problema01,org.example.checkout,CouponResult,0,9,0,0,0,4,0,1,0,1
+problema01,org.example.checkout,ShippingService,0,70,0,22,0,13,0,13,0,2
+problema01,org.example.checkout,Item,6,41,0,4,2,9,2,5,2,3
+problema01,org.example,Main,7,0,0,0,3,0,2,0,2,0

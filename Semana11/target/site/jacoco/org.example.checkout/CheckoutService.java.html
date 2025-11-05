@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckoutService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">problema01</a> &gt; <a href="index.source.html" class="el_package">org.example.checkout</a> &gt; <span class="el_source">CheckoutService.java</span></div><h1>CheckoutService.java</h1><pre class="source lang-java linenums">package org.example.checkout;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+
+public class CheckoutService {
+
+    private final CouponService couponService;
+    private final ShippingService shippingService;
+
+<span class="fc" id="L12">    public CheckoutService(CouponService couponService, ShippingService shippingService) {</span>
+<span class="fc" id="L13">        this.couponService = Objects.requireNonNull(couponService);</span>
+<span class="fc" id="L14">        this.shippingService = Objects.requireNonNull(shippingService);</span>
+<span class="fc" id="L15">    }</span>
+
+    /**
+     * Calcula o total:
+     * 1) subtotal dos itens
+     * 2) percentuais de desconto (tier + primeiraCompra + cupom%), com teto de 30%
+     * 3) imposto 12% somente sobre itens NÃO BOOK, após desconto percentual
+     * 4) frete conforme regras
+     */
+    public CheckoutResult checkout(
+            List&lt;Item&gt; itens,
+            CustomerTier tier,
+            boolean primeiraCompra,
+            String region,
+            double peso,
+            String couponCode,
+            LocalDate today,
+            LocalDate couponExpiryInclusive
+    ) {
+<span class="fc" id="L34">        Objects.requireNonNull(itens, &quot;itens&quot;);</span>
+<span class="fc" id="L35">        Objects.requireNonNull(tier, &quot;tier&quot;);</span>
+<span class="fc" id="L36">        Objects.requireNonNull(today, &quot;today&quot;);</span>
+
+<span class="fc" id="L38">        double subtotal = 0.0;</span>
+<span class="fc" id="L39">        double subtotalTributavel = 0.0;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        for (Item i : itens) {</span>
+<span class="fc" id="L41">            double s = i.subtotal();</span>
+<span class="fc" id="L42">            subtotal += s;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (!&quot;BOOK&quot;.equalsIgnoreCase(i.getCategoria())) {</span>
+<span class="fc" id="L44">                subtotalTributavel += s;</span>
+            }
+        }
+<span class="fc" id="L47">        subtotal = Money.round2(subtotal);</span>
+<span class="fc" id="L48">        subtotalTributavel = Money.round2(subtotalTributavel);</span>
+
+        // descontos percentuais
+<span class="fc bfc" id="L51" title="All 4 branches covered.">        double tierPct = (tier == CustomerTier.SILVER ? 0.05 : (tier == CustomerTier.GOLD ? 0.10 : 0.0));</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">        double firstPct = (primeiraCompra &amp;&amp; subtotal &gt;= 50.0) ? 0.05 : 0.0;</span>
+
+<span class="fc" id="L54">        CouponResult cr = couponService.evaluate(couponCode, today, couponExpiryInclusive, subtotal);</span>
+<span class="fc" id="L55">        double couponPct = cr.percent;</span>
+
+<span class="fc" id="L57">        double totalPct = tierPct + firstPct + couponPct;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (totalPct &gt; 0.30) totalPct = 0.30;</span>
+
+<span class="fc" id="L60">        double discountValue = Money.round2(subtotal * totalPct);</span>
+<span class="fc" id="L61">        double baseAposDesconto = Money.round2(subtotal - discountValue);</span>
+
+        // imposto 12% apenas sobre parte tributável, após desconto
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        double proporcaoTributavel = (subtotal == 0.0) ? 0.0 : (subtotalTributavel / subtotal);</span>
+<span class="fc" id="L65">        double baseTributavelAposDesc = Money.round2(baseAposDesconto * proporcaoTributavel);</span>
+<span class="fc" id="L66">        double tax = Money.round2(baseTributavelAposDesc * 0.12);</span>
+
+        // frete
+<span class="fc bfc" id="L69" title="All 4 branches covered.">        boolean freeByCouponWeight = cr.freeShipping &amp;&amp; peso &lt;= 5.0;</span>
+<span class="fc" id="L70">        double shipping = shippingService.calculate(region, peso, baseAposDesconto, freeByCouponWeight);</span>
+
+<span class="fc" id="L72">        double total = Money.round2(baseAposDesconto + tax + shipping);</span>
+
+<span class="fc" id="L74">        return new CheckoutResult(subtotal, discountValue, tax, shipping, total);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

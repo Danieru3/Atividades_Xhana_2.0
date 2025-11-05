@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShippingService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">problema01</a> &gt; <a href="index.source.html" class="el_package">org.example.checkout</a> &gt; <span class="el_source">ShippingService.java</span></div><h1>ShippingService.java</h1><pre class="source lang-java linenums">package org.example.checkout;
+
+<span class="fc" id="L3">public class ShippingService {</span>
+
+    /**
+     * Frete:
+     * - grátis se freeShipping == true OU subtotal &gt;= 300
+     * - senão por região/peso:
+     *   SUL/SUDESTE: 20/35/50
+     *   NORTE:       30/55/80
+     *   outras:      fixo 40
+     */
+    public double calculate(String region, double weight, double subtotal, boolean freeShipping) {
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        if (weight &lt; 0) throw new IllegalArgumentException(&quot;weight &lt; 0&quot;);</span>
+
+<span class="fc bfc" id="L16" title="All 4 branches covered.">        if (freeShipping || subtotal &gt;= 300.0) return 0.0;</span>
+
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        String r = region == null ? &quot;&quot; : region.trim().toUpperCase();</span>
+
+<span class="fc bfc" id="L20" title="All 4 branches covered.">        if (&quot;SUL&quot;.equals(r) || &quot;SUDESTE&quot;.equals(r)) {</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">            if (weight &lt;= 2.0) return 20.0;</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            if (weight &lt;= 5.0) return 35.0;</span>
+<span class="fc" id="L23">            return 50.0;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        } else if (&quot;NORTE&quot;.equals(r)) {</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (weight &lt;= 2.0) return 30.0;</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">            if (weight &lt;= 5.0) return 55.0;</span>
+<span class="fc" id="L27">            return 80.0;</span>
+        } else {
+<span class="fc" id="L29">            return 40.0;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
