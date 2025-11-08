@@ -64,7 +64,6 @@ class ClienteServiceTest {
         assertThat(atualizado.getTelefone()).isEqualTo("22");
     }
 
-    // ... (os testes 'criar_deveLancarSeEmailJaExiste' e 'atualizar_deveAtualizarCamposBasicos' já devem estar aí) ...
 
     @Test
     @DisplayName("Service: Buscar deve retornar cliente ou lançar NotFoundException")
